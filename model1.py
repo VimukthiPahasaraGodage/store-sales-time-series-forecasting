@@ -6,43 +6,17 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.tsa.stattools import kpss
 
-# load the data
-dtype = {
-    'store_nbr': 'category',
-    'family': 'category',
-    'sales': 'float32',
-    'onpromotion': 'uint64',
-}
 
-past_sales = pd.read_csv(
-    'train.csv',
-    dtype=dtype,
-    parse_dates=['date'],
-    infer_datetime_format=True,
-)
-past_sales = past_sales.set_index('date').to_period('D')
-
-forecast_sales = pd.read_csv(
-    'test.csv',
-    dtype=dtype,
-    parse_dates=['date'],
-    infer_datetime_format=True,
-)
-forecast_sales = forecast_sales.set_index('date').to_period('D')
-
-
-def forecast(store_number):
+def forecast(store_number, family_list, family_list_number, train, test):
     family_index = 0
     results = {}
     params_list = []
-    for family in past_sales['family'].unique():
+    for family in family_list:
         family_index += 1
         print(f'store {store_number}/54    family {family_index}/33: Starting...')
-        train = past_sales.copy()
         train = train[(train['store_nbr'] == store_number) & (train['family'] == family)]
         _train_ = train['sales'].tolist()
 
-        test = forecast_sales.copy()
         test = test[(test['store_nbr'] == store_number) & (test['family'] == family)]
 
         _start_ = len(train)
@@ -50,13 +24,12 @@ def forecast(store_number):
 
         pred = None
         if _train_.count(_train_[0]) != len(_train_):
-            adftest = adfuller(_train_, autolag='AIC')
-            p_value_adftest = adftest[1]
+            adftest_ = adfuller(_train_, autolag='AIC')
+            p_value_adftest = adftest_[1]
 
             kpsstest = kpss(_train_)
             p_value_kpss = kpsstest[1]
 
-            smodel = None
             if p_value_adftest < 0.05 and p_value_kpss < 0.05:
                 smodel = auto_arima(_train_,
                                     start_p=0,
@@ -116,18 +89,52 @@ def forecast(store_number):
 
     # save the test dataframe as a csv file
     results_of_store = pd.DataFrame.from_dict(results, orient='index')
-    results_of_store.to_csv(f'sales_{store_number}.csv')
+    results_of_store.to_csv(f'sales_{store_number}_{family_list_number}.csv')
 
     # save the model params in a csv file
     model_params = pd.DataFrame(params_list, columns=['store_nbr', 'family', 'order', 'seasonal_order'])
-    model_params.to_csv(f'params_{store_number}.csv')
+    model_params.to_csv(f'params_{store_number}_{family_list_number}.csv')
 
 
 if __name__ == '__main__':
+    # load the data
+    dtype = {
+        'store_nbr': 'category',
+        'family': 'category',
+        'sales': 'float32',
+        'onpromotion': 'uint64',
+    }
+
+    past_sales = pd.read_csv(
+        'train.csv',
+        dtype=dtype,
+        parse_dates=['date'],
+        infer_datetime_format=True,
+    )
+    past_sales = past_sales.set_index('date').to_period('D')
+
+    forecast_sales = pd.read_csv(
+        'test.csv',
+        dtype=dtype,
+        parse_dates=['date'],
+        infer_datetime_format=True,
+    )
+    forecast_sales = forecast_sales.set_index('date').to_period('D')
+
+    families = past_sales['family'].unique()
+    family_sub_lists = [families[x:x + 5] for x in range(0, len(families), 5)]
+
     # create a process for each store number and start all the processes simultaneously
     process_list = []
     for store_nbr in past_sales['store_nbr'].unique():
-        process_list.append(Process(target=forecast, args=store_nbr))
+        i = 1
+        for sub_family_list in family_sub_lists:
+            process_list.append(Process(target=forecast,
+                                        args=(store_nbr,
+                                              sub_family_list,
+                                              i,
+                                              past_sales,
+                                              forecast_sales)))
 
     for process in process_list:
         process.start()
