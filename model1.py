@@ -124,7 +124,8 @@ if __name__ == '__main__':
     families = past_sales['family'].unique()
     family_sub_lists = [families[x:x + 5] for x in range(0, len(families), 5)]
 
-    print('family sub lists: ', family_sub_lists)
+    for sub_family_list in family_sub_lists:
+        print('family sub lists: ', sub_family_list)
 
     # create a process for each store number and start all the processes simultaneously
     process_list = []
