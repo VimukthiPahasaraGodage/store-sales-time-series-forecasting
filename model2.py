@@ -144,6 +144,8 @@ if __name__ == '__main__':
                                              test_sets[index]))
             index += 1
 
+    pool.close()
+
     print('total number of processes: ', len(process_list))
 
     for process in process_list:
