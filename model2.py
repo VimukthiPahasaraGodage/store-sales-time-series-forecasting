@@ -134,7 +134,7 @@ if __name__ == '__main__':
     # create a process for each store number and start all the processes simultaneously
     process_list = []
     index = 0
-    pool = Pool(procesess=multiprocessing.cpu_count())
+    pool = Pool(multiprocessing.cpu_count())
     for store_nbr in past_sales['store_nbr'].unique():
         for family in past_sales['family'].unique():
             pool.apply_async(forecast, args=(store_nbr,
