@@ -66,7 +66,7 @@ def forecast(store_number, family, index, train, test):
         order = smodel.order
         seasonal_order = smodel.seasonal_order
 
-        sarima_model = SARIMAX(train['sales'].tolist(), order=order, seasonal_order=seasonal_order)
+        sarima_model = SARIMAX(train, order=order, seasonal_order=seasonal_order)
         sarima_model_fit = sarima_model.fit()
 
         # save order and seasonal order
