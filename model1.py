@@ -13,7 +13,7 @@ def forecast(store_number, family_list, family_list_number, train, test):
     params_list = []
     for family in family_list:
         family_index += 1
-        print(f'store {store_number}/54    family {family_index}/33: Starting...')
+        print(f'store {store_number}/54    sub family list {family_list_number}    family {family_index}/{len(family_list)}: Starting...')
         train = train[(train['store_nbr'] == store_number) & (train['family'] == family)]
         _train_ = train['sales'].tolist()
 
@@ -84,15 +84,21 @@ def forecast(store_number, family_list, family_list_number, train, test):
         for i, j in zip(test['id'].tolist(), test['sales'].tolist()):
             results[i] = j
 
-        print(f'store {store_number}/54    family {family_index}/33: Ended')
+        print(f'store {store_number}/54    sub family list {family_list_number}    family {family_index}/{len(family_list)}: Ended')
 
     # save the test dataframe as a csv file
     results_of_store = pd.DataFrame.from_dict(results, orient='index')
     results_of_store.to_csv(f'sales_{store_number}_{family_list_number}.csv')
+    print('###########################################################################################')
+    print('###########################################################################################')
+    print(f'store {store_number}/54    sub family list {family_list_number} result saved successfully!')
+    print('###########################################################################################')
+    print('###########################################################################################')
 
     # save the model params in a csv file
     model_params = pd.DataFrame(params_list, columns=['store_nbr', 'family', 'order', 'seasonal_order'])
     model_params.to_csv(f'params_{store_number}_{family_list_number}.csv')
+    print(f'store {store_number}/54    sub family list {family_list_number} params saved successfully!')
 
 
 if __name__ == '__main__':
@@ -144,6 +150,7 @@ if __name__ == '__main__':
                                               i,
                                               train_sets[dataset_index],
                                               test_sets[dataset_index])))
+            i += 1
             dataset_index += 1
 
     print('total number of processes: ', len(process_list))
