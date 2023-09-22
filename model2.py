@@ -132,7 +132,6 @@ if __name__ == '__main__':
     print('num train sets: ', len(train_sets), ' num test sets: ', len(test_sets))
 
     # create a process for each store number and start all the processes simultaneously
-    process_list = []
     index = 0
     pool = Pool(multiprocessing.cpu_count())
     for store_nbr in past_sales['store_nbr'].unique():
@@ -146,9 +145,6 @@ if __name__ == '__main__':
 
     pool.close()
 
-    print('total number of processes: ', len(process_list))
-
-    for process in process_list:
-        process.start()
-
     print('processes are running in background...')
+
+    pool.join()
