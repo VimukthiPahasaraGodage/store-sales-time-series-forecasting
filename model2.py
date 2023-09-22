@@ -9,7 +9,6 @@ from statsmodels.tsa.stattools import kpss
 
 
 def forecast(store_number, family, index, train, test):
-    results = {}
     params_list = []
 
     print(f'store {store_number}/54    family {family}: Starting...')
@@ -79,15 +78,10 @@ def forecast(store_number, family, index, train, test):
 
     test['sales'] = pred
 
-    # update the submission dictionary
-    for i, j in zip(test['id'].tolist(), test['sales'].tolist()):
-        results[i] = j
-
     print(f'store {store_number}/54    family {family}: Ended')
 
     # save the test dataframe as a csv file
-    results_of_store = pd.DataFrame.from_dict(results, orient='index')
-    results_of_store.to_csv(f'pred/{index}.csv')
+    test.to_csv('result_' + str(index) + '.csv')
     print('###########################################################################################')
     print('###########################################################################################')
     print(f'store {store_number}/54    family {family} result saved successfully!')
@@ -96,7 +90,7 @@ def forecast(store_number, family, index, train, test):
 
     # save the model params in a csv file
     model_params = pd.DataFrame(params_list, columns=['store_nbr', 'family', 'order', 'seasonal_order'])
-    model_params.to_csv(f'params/{index}.csv')
+    model_params.to_csv('params_' + str(index) + '.csv')
     print(f'store {store_number}/54    family{family} params saved successfully!')
 
 
