@@ -22,7 +22,6 @@ def forecast(store_number, family_list, family_list_number, train, test):
         _start_ = len(train)
         _end_ = len(train) + len(test) - 1
 
-        pred = None
         if _train_.count(_train_[0]) != len(_train_):
             adftest_ = adfuller(_train_, autolag='AIC')
             p_value_adftest = adftest_[1]
@@ -127,8 +126,15 @@ if __name__ == '__main__':
     for sub_family_list in family_sub_lists:
         print('family sub lists: ', sub_family_list)
 
+    num_process = len(family_sub_lists) * past_sales['store_nbr'].nunique()
+    train_sets = [past_sales.copy() for i in range(0, num_process)]
+    test_sets = [forecast_sales.copy() for i in range(0, num_process)]
+
+    print('num train sets: ', len(train_sets), ' num test sets: ', len(test_sets))
+
     # create a process for each store number and start all the processes simultaneously
     process_list = []
+    dataset_index = 0
     for store_nbr in past_sales['store_nbr'].unique():
         i = 1
         for sub_family_list in family_sub_lists:
@@ -136,8 +142,9 @@ if __name__ == '__main__':
                                         args=(store_nbr,
                                               sub_family_list,
                                               i,
-                                              past_sales,
-                                              forecast_sales)))
+                                              train_sets[dataset_index],
+                                              test_sets[dataset_index])))
+            dataset_index += 1
 
     print('total number of processes: ', len(process_list))
 
