@@ -10,6 +10,7 @@ if __name__ == '__main__':
             dfs.append(pd.read_csv(str(i) + '.csv'))
 
     param_df = pd.concat(dfs, axis=0)
+    param_df.to_csv('a3_params.csv')
 
     dtype = {
         'store_nbr': 'category',
