@@ -2,7 +2,7 @@ import pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 if __name__ == '__main__':
-    param_dfs_range = [range(1, 5), range(5, 10), range(20, 25), range(30, 35)]
+    param_dfs_range = [range(1, 5), range(15, 20), range(30, 35), range(45, 50)]
     dfs = []
 
     for range_ in param_dfs_range:
