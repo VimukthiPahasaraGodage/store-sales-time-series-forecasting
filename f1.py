@@ -41,7 +41,6 @@ if __name__ == '__main__':
         family = row['family']
         order = row['order']
         seasonal_order = row['seasonal_order']
-        print(order, seasonal_order, type(order))
         if type(order) is str:
             order = eval(order)
             seasonal_order = eval(seasonal_order)
@@ -51,10 +50,8 @@ if __name__ == '__main__':
 
         test = forecast_sales[(forecast_sales['store_nbr'] == str(store_nbr)) & (forecast_sales['family'] == family)]
 
-        print(train)
         start_ = len(train)
         end_ = len(train) + len(test) - 1
-        print(start_, end_)
 
         if type(order) is tuple and type(seasonal_order) is tuple:
             sarima_model = SARIMAX(train, order=order, seasonal_order=seasonal_order)
@@ -64,7 +61,6 @@ if __name__ == '__main__':
         else:
             pred = [train[0] for i in range(start_, end_ + 1)]
 
-        print(pred)
         test['sales'] = pred
         result_dfs.append(test)
 
