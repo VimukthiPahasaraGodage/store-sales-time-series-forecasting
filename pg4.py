@@ -4,7 +4,7 @@ from pmdarima import auto_arima
 
 def get_params_for_sarimax(store_number, train_):
     params_list = []
-    for family in train_['family'].unique()[0:1]:
+    for family in train_['family'].unique():
         print(f'store {store_number}/54    family {family}: Starting...')
         train = train_[(train_['store_nbr'] == str(store_number)) & (train_['family'] == family)]
         train = train['sales'].tolist()
