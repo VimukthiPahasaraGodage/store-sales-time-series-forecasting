@@ -1,5 +1,6 @@
 import pandas as pd
 from pmdarima import auto_arima
+from statsmodels.tsa.stattools import adfuller
 
 
 def get_params_for_sarimax(store_number, train_):
@@ -10,25 +11,43 @@ def get_params_for_sarimax(store_number, train_):
         train = train['sales'].tolist()
 
         if train.count(train[0]) != len(train):
-            smodel = auto_arima(train,
-                                start_p=0,
-                                d=None,
-                                start_q=0,
-                                max_p=7,
-                                max_d=3,
-                                max_q=7,
-                                m=7,
-                                start_P=0,
-                                D=None,
-                                start_Q=0,
-                                max_P=7,
-                                max_D=3,
-                                max_Q=7,
-                                seasonal=True,
-                                trace=True,
-                                error_action='ignore',
-                                suppress_warnings=True,
-                                stepwise=True)
+            adftest_ = adfuller(train, autolag='AIC')
+            p_value_adftest = adftest_[1]
+
+            if p_value_adftest > 0.05:
+                smodel = auto_arima(train,
+                                    start_p=2,
+                                    d=None,
+                                    start_q=2,
+                                    max_p=4,
+                                    max_d=2,
+                                    max_q=4,
+                                    m=7,
+                                    start_P=1,
+                                    D=None,
+                                    start_Q=1,
+                                    max_P=2,
+                                    max_D=1,
+                                    max_Q=2,
+                                    seasonal=True,
+                                    trace=False,
+                                    error_action='ignore',
+                                    suppress_warnings=True,
+                                    stepwise=True)
+            else:
+                smodel = auto_arima(train,
+                                    start_p=2,
+                                    d=0,
+                                    start_q=2,
+                                    max_p=4,
+                                    max_d=0,
+                                    max_q=4,
+                                    m=1,
+                                    seasonal=False,
+                                    trace=False,
+                                    error_action='ignore',
+                                    suppress_warnings=True,
+                                    stepwise=True)
             order = smodel.order
             seasonal_order = smodel.seasonal_order
             params = [store_number, family, order, seasonal_order]
