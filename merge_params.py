@@ -1,14 +1,11 @@
 import pandas as pd
 
 dataframes = []
-for i in range(0, 1781):
-    filename = 'params_' + str(i) + '.csv'
-    dataframes.append(pd.read_csv(filename))
+for df_file in ['a1_params.csv', 'a2_params.csv', 'a3_params.csv']:
+    dataframes.append(pd.read_csv(df_file))
 
 final = pd.concat(dataframes, axis=0)
 
-final.sort_index(inplace=True)
-
-final.columns = ['id', 'store_nbr', 'family', 'order', 'seasonal_order']
+final.reset_index(drop=True, inplace=True)
 
 final.to_csv('parameters.csv')

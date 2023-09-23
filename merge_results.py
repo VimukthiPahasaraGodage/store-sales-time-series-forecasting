@@ -1,9 +1,8 @@
 import pandas as pd
 
 dataframes = []
-for i in range(0, 1781):
-    filename = 'result_' + str(i) + '.csv'
-    dataframes.append(pd.read_csv(filename))
+for df_file in ['a1.csv', 'a2.csv', 'a3.csv']:
+    dataframes.append(pd.read_csv(df_file))
 
 final = pd.concat(dataframes, axis=0)
 
