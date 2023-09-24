@@ -12,7 +12,7 @@ if __name__ == '__main__':
     }
 
     past_sales = pd.read_csv(
-        'train.csv',
+        'new_train.csv',
         dtype=dtype,
         parse_dates=['date'],
         infer_datetime_format=True,
