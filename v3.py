@@ -35,7 +35,9 @@ if __name__ == '__main__':
         train_length = len(train)
 
         test = train.iloc[train_length - 16:, :]
+        print(test)
         train = train.iloc[:train_length - 16, :]
+        print(train)
 
         start_ = len(train)
         end_ = len(train) + len(test) - 1
@@ -55,11 +57,12 @@ if __name__ == '__main__':
                 print('###############################################################################################')
 
             pred = sarima_model_fit.predict(start=start_, end=end_, dynamic=False, typ="levels", exog=test[['holiday', 'onpromotion', 'oil']])
+            test['pred_sales'] = pred.tolist()
+            result_dfs.append(test)
         else:
             pred = [(train['sales'].tolist())[0] for i in range(start_, end_ + 1)]
-
-        test['pred_sales'] = pred
-        result_dfs.append(test)
+            test['pred_sales'] = pred
+            result_dfs.append(test)
 
     result = pd.concat(result_dfs, axis=0)
     result.to_csv('a3_v.csv')
