@@ -54,9 +54,9 @@ if __name__ == '__main__':
                 print('############################## Diverge Successful! ############################################')
                 print('###############################################################################################')
 
-            pred = sarima_model_fit.predict(start=start_, end=end_, dynamic=False, typ="levels")
+            pred = sarima_model_fit.predict(start=start_, end=end_, dynamic=False, typ="levels", exog=test[['holiday', 'onpromotion', 'oil']])
         else:
-            pred = [train[0] for i in range(start_, end_ + 1)]
+            pred = [(train['sales'].tolist())[0] for i in range(start_, end_ + 1)]
 
         test['pred_sales'] = pred
         result_dfs.append(test)
