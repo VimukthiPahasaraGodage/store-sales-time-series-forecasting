@@ -44,19 +44,17 @@ if __name__ == '__main__':
 
         if type(order) is tuple and type(seasonal_order) is tuple:
             try:
-                sarima_model = SARIMAX(train['sales'], order=order, seasonal_order=seasonal_order,
-                                       exog=train[['holiday', 'onpromotion', 'oil']])
+                sarima_model = SARIMAX(train['sales'], order=order, seasonal_order=seasonal_order)
                 sarima_model_fit = sarima_model.fit()
             except:
                 print('###############################################################################################')
                 print('############################# Error : Diverging from default ##################################')
-                sarima_model = SARIMAX(train['sales'], order=order, seasonal_order=seasonal_order,
-                                       enforce_stationarity=False, exog=train[['holiday', 'onpromotion', 'oil']])
+                sarima_model = SARIMAX(train['sales'], order=order, seasonal_order=seasonal_order, enforce_stationarity=False)
                 sarima_model_fit = sarima_model.fit()
                 print('############################## Diverge Successful! ############################################')
                 print('###############################################################################################')
 
-            pred = sarima_model_fit.predict(start=start_, end=end_, dynamic=False, typ="levels", exog=test[['holiday', 'onpromotion', 'oil']])
+            pred = sarima_model_fit.predict(start=start_, end=end_, dynamic=False, typ="levels")
             test['pred_sales'] = pred.tolist()
             result_dfs.append(test)
         else:
