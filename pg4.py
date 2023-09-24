@@ -22,7 +22,7 @@ def get_params_for_sarimax(store_number, train_):
                                     max_p=4,
                                     max_d=2,
                                     max_q=4,
-                                    m=7,
+                                    m=30,
                                     start_P=1,
                                     D=None,
                                     start_Q=1,
